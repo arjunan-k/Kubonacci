@@ -16,6 +16,12 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v2
 
+    - name: Test
+        run: |-
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -t arjunank/react-test -f ./client/Dockerfile.dev ./client
+          docker run -e CI=true arjunank/react-test npm test
+
     - name: Install kubectl
       uses: azure/setup-kubectl@v1
       with:
@@ -39,5 +45,14 @@ jobs:
         ECR_REPOSITORY: kubonacciecs
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest ./client
-        docker push -a $ECR_REGISTRY/$ECR_REPOSITORY
+        docker build -t multi-client ./client
+        docker build -t multi-server ./server
+        docker build -t multi-worker ./worker
+
+        docker tag multi-client:latest $ECR_REGISTRY/multi-client:latest
+        docker tag multi-server:latest $ECR_REGISTRY/multi-server:latest
+        docker tag multi-worker:latest $ECR_REGISTRY/multi-worker:latest
+
+        docker push $ECR_REGISTRY/multi-client:latest
+        docker push $ECR_REGISTRY/multi-server:latest
+        docker push $ECR_REGISTRY/multi-worker:latest
