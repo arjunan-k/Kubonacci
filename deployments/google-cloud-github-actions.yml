@@ -1,0 +1,68 @@
+name: Deploy Kubonacci
+on:
+  push:
+    branches:
+      - main
+      - master
+env:
+  SHA: $(git rev-parse HEAD)
+jobs:
+  build:
+    runs-on: ubuntu-latest
+ 
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+ 
+    steps:
+      - uses: actions/checkout@v3
+ 
+      - name: Test
+        run: |-
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -t arjunank/react-test -f ./client/Dockerfile.dev ./client
+          docker run -e CI=true arjunank/react-test npm test
+ 
+      - name: Set Identity Provider
+        uses: 'google-github-actions/auth@v0'
+        with:
+          workload_identity_provider: 'projects/483100437721/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
+          service_account: 'gh-deployer@multi-338920.iam.gserviceaccount.com'
+ 
+      - name: Set Project
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          project_id: multi-338920
+ 
+      - name: Auth
+        run: |-
+          gcloud --quiet auth configure-docker
+ 
+      - name: Get Credentials
+        uses: google-github-actions/get-gke-credentials@v0
+        with:
+          cluster_name: multi-cluster
+          location: us-central1-c
+ 
+      - name: Build
+        run: |-
+          docker build -t arjunank/multi-client-k8s-gh:latest -t arjunank/multi-client-k8s-gh:${{ env.SHA }} -f ./client/Dockerfile ./client
+          docker build -t arjunank/multi-server-k8s-pgfix-gh:latest -t arjunank/multi-server-k8s-pgfix-gh:${{ env.SHA }} -f ./server/Dockerfile ./server
+          docker build -t arjunank/multi-worker-k8s-gh:latest -t arjunank/multi-worker-k8s-gh:${{ env.SHA }} -f ./worker/Dockerfile ./worker
+ 
+      - name: Push
+        run: |-
+          docker push arjunank/multi-client-k8s-gh:latest
+          docker push arjunank/multi-server-k8s-pgfix-gh:latest
+          docker push arjunank/multi-worker-k8s-gh:latest
+ 
+          docker push arjunank/multi-client-k8s-gh:${{ env.SHA }}
+          docker push arjunank/multi-server-k8s-pgfix-gh:${{ env.SHA }}
+          docker push arjunank/multi-worker-k8s-gh:${{ env.SHA }}
+ 
+      - name: Apply
+        run: |-
+          kubectl apply -f k8s
+          kubectl set image deployments/server-deployment server=arjunank/multi-server-k8s-pgfix-gh:${{ env.SHA }}
+          kubectl set image deployments/client-deployment client=arjunank/multi-client-k8s-gh:${{ env.SHA }}
+          kubectl set image deployments/worker-deployment worker=arjunank/multi-worker-k8s-gh:${{ env.SHA }}
