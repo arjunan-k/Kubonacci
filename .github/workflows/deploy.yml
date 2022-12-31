@@ -49,6 +49,6 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY-server:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY-server:latest ./server
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY-worker:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY-worker:latest ./worker
 
-       docker push -a $ECR_REGISTRY/$ECR_REPOSITORY-client
-       docker push -a $ECR_REGISTRY/$ECR_REPOSITORY-server
-       docker push -a $ECR_REGISTRY/$ECR_REPOSITORY-worker
+        docker push -a $ECR_REGISTRY/$ECR_REPOSITORY-client
+        docker push -a $ECR_REGISTRY/$ECR_REPOSITORY-server
+        docker push -a $ECR_REGISTRY/$ECR_REPOSITORY-worker
