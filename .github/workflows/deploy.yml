@@ -17,10 +17,10 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Test
-        run: |-
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t arjunank/react-test -f ./client/Dockerfile.dev ./client
-          docker run -e CI=true arjunank/react-test npm test
+      run: |-
+        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+        docker build -t arjunank/react-test -f ./client/Dockerfile.dev ./client
+        docker run -e CI=true arjunank/react-test npm test
 
     - name: Install kubectl
       uses: azure/setup-kubectl@v1
