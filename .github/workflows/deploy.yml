@@ -18,7 +18,7 @@ jobs:
 
     - name: Test
       run: |-
-        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }
+        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
         docker build -t arjunank/react-test -f ./client/Dockerfile.dev ./client
         docker run -e CI=true arjunank/react-test npm test
 
