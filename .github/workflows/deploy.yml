@@ -50,6 +50,6 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:server ./server
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:worker ./worker
 
-        docker push -a $ECR_REGISTRY/$ECR_REPOSITORY:client
-        docker push -a $ECR_REGISTRY/$ECR_REPOSITORY:server
-        docker push -a $ECR_REGISTRY/$ECR_REPOSITORY:worker
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:client
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:server
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:worker
