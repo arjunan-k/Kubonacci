@@ -18,7 +18,7 @@ jobs:
 
     - name: Test
       run: |-
-        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }
         docker build -t arjunank/react-test -f ./client/Dockerfile.dev ./client
         docker run -e CI=true arjunank/react-test npm test
 
@@ -45,10 +45,10 @@ jobs:
         ECR_REPOSITORY: kubonacciecs
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY-client:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY-client:latest ./client
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY-server:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY-server:latest ./server
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY-worker:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY-worker:latest ./worker
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:client -t $ECR_REGISTRY/$ECR_REPOSITORY:client ./client
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:server -t $ECR_REGISTRY/$ECR_REPOSITORY:server ./server
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:worker -t $ECR_REGISTRY/$ECR_REPOSITORY:worker ./worker
 
-        docker push -a $ECR_REGISTRY/$ECR_REPOSITORY-client
-        docker push -a $ECR_REGISTRY/$ECR_REPOSITORY-server
-        docker push -a $ECR_REGISTRY/$ECR_REPOSITORY-worker
+        docker push -a $ECR_REGISTRY/$ECR_REPOSITORY:client
+        docker push -a $ECR_REGISTRY/$ECR_REPOSITORY:server
+        docker push -a $ECR_REGISTRY/$ECR_REPOSITORY:worker
