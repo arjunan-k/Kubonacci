@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: arjunank-co-tls
+spec:
+  secretName: arjunank-co
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: arjunank.co
+  dnsNames:
+    - arjunank.co
+    - www.arjunank.co

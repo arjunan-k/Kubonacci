@@ -21,11 +21,11 @@ spec:
           image: postgres
           env:
             - name: POSTGRES_PASSWORD
-             # value: postgres_arjunank_password
-              valueFrom:
-                secretKeyRef:
-                  name: pgpassword
-                  key: PGPASSWORD
+              value: postgres_arjunank_password
+              # valueFrom:
+                # secretKeyRef:
+                  # name: pgpassword
+                  # key: PGPASSWORD
           ports:
             - containerPort: 5432
           volumeMounts:

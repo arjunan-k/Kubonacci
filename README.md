@@ -1,2 +1,2 @@
 # <p align='center'>Kubonacci System Architecture</p>
-![](./system.png)
+![](./images/system.png)
