@@ -42,20 +42,16 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: kubonacciecs
         IMAGE_TAG: ${{ github.sha }}
-        SHA=$(git rev-parse HEAD)
+        # SHA: $(git rev-parse HEAD)
 
       run: |
-        docker build -t arjunank/multi-client-k8s:latest -t arjunank/multi-client-k8s:$SHA -f ./client/Dockerfile ./client
-        docker build -t arjunank/multi-server-k8s:latest -t arjunank/multi-server-k8s:$SHA -f ./server/Dockerfile ./server
-        docker build -t arjunank/multi-worker-k8s:latest -t arjunank/multi-worker-k8s:$SHA -f ./worker/Dockerfile ./worker
+        docker build -t arjunank/multi-client -f ./client/Dockerfile ./client
+        docker build -t arjunank/multi-server -f ./server/Dockerfile ./server
+        docker build -t arjunank/multi-worker -f ./worker/Dockerfile ./worker
 
-        docker push arjunank/multi-client-k8s:latest
-        docker push arjunank/multi-server-k8s:latest
-        docker push arjunank/multi-worker-k8s:latest
-
-        docker push arjunank/multi-client-k8s:$SHA
-        docker push arjunank/multi-server-k8s:$SHA
-        docker push arjunank/multi-worker-k8s:$SHA
+        docker push arjunank/multi-client
+        docker push arjunank/multi-server
+        docker push arjunank/multi-worker
 
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:client ./client
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:server ./server
