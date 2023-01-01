@@ -4,9 +4,11 @@ on:
     branches:
       - main
       - master
+env:
+  global:
+    - SHA=$(git rev-parse HEAD)
 
 jobs:
-
   deploy:
     name: Build image
     runs-on: ubuntu-latest
@@ -45,6 +47,17 @@ jobs:
         ECR_REPOSITORY: kubonacciecs
         IMAGE_TAG: ${{ github.sha }}
       run: |
+        docker build -t arjunank/multi-client-k8s:latest -t arjunank/multi-client-k8s:$SHA -f ./client/Dockerfile ./client
+        docker build -t arjunank/multi-server-k8s:latest -t arjunank/multi-server-k8s:$SHA -f ./server/Dockerfile ./server
+        docker build -t arjunank/multi-worker-k8s:latest -t arjunank/multi-worker-k8s:$SHA -f ./worker/Dockerfile ./worker
+
+        docker push arjunank/multi-client-k8s:latest
+        docker push arjunank/multi-server-k8s:latest
+        docker push arjunank/multi-worker-k8s:latest
+
+        docker push arjunank/multi-client-k8s:$SHA
+        docker push arjunank/multi-server-k8s:$SHA
+        docker push arjunank/multi-worker-k8s:$SHA
 
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:client ./client
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:server ./server
