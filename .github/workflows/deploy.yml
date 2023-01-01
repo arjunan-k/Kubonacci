@@ -4,10 +4,6 @@ on:
     branches:
       - main
       - master
-env:
-  global:
-    - SHA=$(git rev-parse HEAD)
-
 jobs:
   deploy:
     name: Build image
@@ -46,6 +42,7 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: kubonacciecs
         IMAGE_TAG: ${{ github.sha }}
+        SHA: $(git rev-parse HEAD)
       run: |
         docker build -t arjunank/multi-client-k8s:latest -t arjunank/multi-client-k8s:$SHA -f ./client/Dockerfile ./client
         docker build -t arjunank/multi-server-k8s:latest -t arjunank/multi-server-k8s:$SHA -f ./server/Dockerfile ./server
